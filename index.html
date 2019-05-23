@@ -1,0 +1,151 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>数字摇奖</title>
+    <script type="text/javascript" src="js/jquery-1.7.2-min.js"></script>
+    <script type="text/javascript" src="js/easing.js"></script>
+    <style>
+        html,
+        body {
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+        }
+
+        body {
+            background: url(images/body_bg.jpg) 0px 0px repeat-x #000;
+        }
+
+        .main_bg {
+            background: url(images/main_bg.jpg) top center no-repeat;
+            height: 1000px;
+        }
+
+        .main {
+            width: 1000px;
+            height: 1000px;
+            position: relative;
+            margin: 0 auto;
+        }
+
+        .num_mask {
+            background: url(images/num_mask.png) 0px 0px no-repeat;
+            height: 184px;
+            width: 740px;
+            position: absolute;
+            left: 59%;
+            top: 180px;
+            margin-left: -370px;
+            z-index: 9;
+        }
+
+        .num_box {
+            height: 450px;
+            width: 750px;
+            position: absolute;
+            /* 设置数字左右位置 */
+            left: 59%;
+            top: 180px;
+            margin-left: -370px;
+            z-index: 8;
+            overflow: hidden;
+            text-align: center;
+        }
+
+        .num {
+            background: url(images/num.png) top center repeat-y;
+            width: 181px;
+            height: 265px;
+            float: left;
+            margin-right: 6px;
+        }
+
+        .btn {
+            background: url(images/btn_start.png) 0px 0px no-repeat;
+            width: 264px;
+            height: 89px;
+            position: relative;
+            /* 按钮位置 */
+            left: 37%;
+            bottom: 50px;
+            margin-left: -132px;
+            cursor: pointer;
+            clear: both;
+            top: 90px;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="main_bg">
+        <div class="main">
+            <!-- <div class="res"></div> -->
+            <div class="num_mask"></div>
+            <div class="num_box">
+                <div class="num"></div>
+                <div class="num"></div>
+                <div class="num"></div>
+                <div class="btn"></div>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>
+<script>
+    function numRand() {
+        var x = 0400; //上限
+        var y = 0001; //下限
+        var rand = parseInt(Math.random() * (x - y + 1) + y);
+        return rand;
+    }
+    var isBegin = false;
+    var last = [];
+    $(function() {
+        var u = 265;
+        $('.btn').click(function() {
+            if (isBegin) return false;
+            isBegin = true;
+            if(last.length > 0) {
+                $(".num:eq(0)").css('backgroundPositionY', (10 - last[0]) * 265);
+                $(".num:eq(1)").css('backgroundPositionY', (10 - last[1]) * 265);
+                $(".num:eq(2)").css('backgroundPositionY', (10 - last[2]) * 265);
+            }else {
+                $(".num").css('backgroundPositionY', 1);
+            }
+            var result = numRand();
+            var temp = (result + '').split('');
+            // $(".res").text("" + result);
+            var num_arr = [0, 0, 0];
+            if (result >= 10 && result < 100) {
+                console.log(result);
+                num_arr[1] = temp[0];
+                num_arr[2] = temp[1];
+            } else if (result < 10) {
+                console.log(result);
+                num_arr[2] = temp[0];
+            } else {
+                num_arr = temp;
+            }
+            last = num_arr;
+            $(".num").each(function(index) {
+                var _num = $(this);
+                setTimeout(function() {
+                    _num.animate({
+                        backgroundPositionY: (u * 60) - (u * num_arr[index])
+                    }, {
+                        duration: 6000 + index * 3000,
+                        easing: "easeInOutCirc",
+                        complete: function() {
+                            console.log(index);
+                            if (index == 2) isBegin = false;
+                        }
+                    });
+                }, index * 300);
+            });
+//            isBegin = false;
+        });
+    });
+</script>
